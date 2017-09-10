@@ -31,6 +31,7 @@ export class SelectComponent implements ControlValueAccessor, OnChanges, OnInit 
     @Input() disabled: boolean = false;
     @Input() multiple: boolean = false;
     @Input() noFilter: number = 0;
+    @Input() disableClientFilter: boolean = false;
 
     // Style settings.
     @Input() highlightColor: string;
@@ -50,6 +51,7 @@ export class SelectComponent implements ControlValueAccessor, OnChanges, OnInit 
     @Output() focus = new EventEmitter<null>();
     @Output() blur = new EventEmitter<null>();
     @Output() noOptionsFound = new EventEmitter<string>();
+    @Output() inputChanged = new EventEmitter<string>();
 
     @ViewChild('selection') selectionSpan: ElementRef;
     @ViewChild('dropdown') dropdown: SelectDropdownComponent;
@@ -159,7 +161,9 @@ export class SelectComponent implements ControlValueAccessor, OnChanges, OnInit 
     }
 
     onFilterInput(term: string) {
-        this.filter(term);
+        if (!this.disableClientFilter)
+            this.filter(term);
+        this.inputChanged.emit(term);
     }
 
     onSingleFilterKeydown(event: any) {
